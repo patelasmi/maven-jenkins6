@@ -1,21 +1,60 @@
 pipeline {
+
     agent any
-    stages {
-        stage('git-code-download') {
-            steps {
-                echo "Download code from Git"
-                git branch: 'main', url: 'https://github.com/devopstechlab/maven-jenkins6.git'
-            }
-        }
-        stage('create-docker-image') {
-            steps {
-                sh '''
-                docker build -t devopstechlab/mytomcat:${BUILD_NUMBER} .
-                docker tag devopstechlab/mytomcat:${BUILD_NUMBER} devopstechlab/mytomcat:latest
-                docker push devopstechlab/mytomcat:${BUILD_NUMBER}
-                docker push devopstechlab/mytomcat:latest
-                '''
-            }
-        }
+
+    tools {
+
+        maven 'maven3'
+
+        jdk 'java17'
+
     }
+
+    stages {
+
+        stage('Download Code from git') {
+
+            steps {
+
+                echo 'Downloading code from Git'
+
+                git branch: 'main', url: 'https://github.com/patelasmi/maven-jenkins6.git'
+
+            }
+
+        }
+
+        stage('Build') {
+
+            steps {
+
+                echo 'Building Java project using maven'
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Archive Artifacts') {
+
+            steps {
+
+                echo 'Archiving the artifacts'
+
+                archiveArtifacts artifacts: '**/*.war', followSymlinks: false
+
+            }
+
+        }
+        
+        stage('Build pipeline deploy project') {
+            
+            steps {
+                build wait: false, job: 'pipeline-deploy-java'
+            }
+        }
+
+    }
+
 }
