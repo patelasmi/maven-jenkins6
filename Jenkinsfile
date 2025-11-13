@@ -10,10 +10,10 @@ pipeline {
         stage('create-docker-image') {
             steps {
                 sh '''
-                docker build -t patelasmi/mytomcat:${BUILD_NUMBER} .
-                docker tag patelasmi/mytomcat:${BUILD_NUMBER} patelasmi/mytomcat:latest
-                docker push patelasmi/mytomcat:${BUILD_NUMBER}
-                docker push patelasmi/mytomcat:latest
+                docker build -t asmi080497/mytomcat:${BUILD_NUMBER} .
+                docker tag asmi080497/mytomcat:${BUILD_NUMBER} asmi080497/mytomcat:latest
+                docker push asmi080497/mytomcat:${BUILD_NUMBER}
+                docker push asmi080497/mytomcat:latest
                 '''
             }
         }
