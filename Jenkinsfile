@@ -1,60 +1,21 @@
 pipeline {
-
     agent any
-
-    tools {
-
-        maven 'maven3'
-
-        jdk 'java17'
-
-    }
-
     stages {
-
-        stage('Download Code from git') {
-
+        stage('git-code-download') {
             steps {
-
-                echo 'Downloading code from Git'
-
+                echo "Download code from Git"
                 git branch: 'main', url: 'https://github.com/patelasmi/maven-jenkins6.git'
-
             }
-
         }
-
-        stage('Build') {
-
+        stage('create-docker-image') {
             steps {
-
-                echo 'Building Java project using maven'
-
-                sh 'mvn clean package'
-
-            }
-
-        }
-
-        stage('Archive Artifacts') {
-
-            steps {
-
-                echo 'Archiving the artifacts'
-
-                archiveArtifacts artifacts: '**/*.war', followSymlinks: false
-
-            }
-
-        }
-        
-        stage('Build pipeline deploy project') {
-            
-            steps {
-                build wait: false, job: 'pipeline-deploy-java'
+                sh '''
+                docker build -t patelasmi/mytomcat:${BUILD_NUMBER} .
+                docker tag patelasmi/mytomcat:${BUILD_NUMBER} patelasmi/mytomcat:latest
+                docker push patelasmi/mytomcat:${BUILD_NUMBER}
+                docker push patelasmi/mytomcat:latest
+                '''
             }
         }
-
     }
-
 }
