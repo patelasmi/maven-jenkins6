@@ -8,7 +8,7 @@ RUN mvn package
 
 # Tomcat image for deployment
 
-FROM tomcat:9.0.56-jdk17-openjdk-slim
+FROM tomcat:10.1-jdk17
 
 WORKDIR /usr/local/tomcat/webapps
 
